@@ -1,5 +1,5 @@
 # Despiece
-<!DOCTYPE html>
+<GDGG>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
