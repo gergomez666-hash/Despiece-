@@ -12,7 +12,7 @@
   <meta name="apple-mobile-web-app-title" content="Despiece TV">
   
   <style>
-    :root { --bg: #f2f2f7; --card: #ffffff; --primary: #007aff; --secondary: #5856d6; --success: #34c759; --danger: #ff3b30; --border: #e5e5ea; }
+    :root { --bg: #f2f2f7; --card: #ffffff; --primary: #007aff; --secondary: #5856d6; --success: #34c759; --danger: #ff3b30; --wallapop: #13c1a3; --border: #e5e5ea; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; padding: 16px; color: #1c1c1e; }
     h1 { font-size: 24px; margin-bottom: 12px; }
     .top-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
@@ -28,12 +28,15 @@
     .badge-ok { color: var(--success); font-weight: bold; margin-left: 4px; }
     .badge-combo { background: #ff9500; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 6px; }
     .badge-noref { color: #8e8e93; font-style: italic; font-size: 12px; margin-left: 4px; }
+    .badge-wallapop { background: var(--wallapop); color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 4px; }
+    .badge-no-disp { color: var(--danger); font-size: 12px; margin-left: 4px; font-weight: bold; }
     .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); padding: 20px; overflow-y: auto; z-index: 1000; }
     .modal-content { background: white; border-radius: 14px; padding: 20px; max-width: 500px; margin: 20px auto; }
     label { display: block; font-size: 13px; font-weight: 600; margin-top: 10px; color: #6c6c70; }
     input[type="text"], textarea { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; font-size: 15px; }
     .input-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
     .input-row input[type="text"] { flex: 1; min-width: 120px; margin-top: 0; }
+    .sub-options { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; background: #f8f8f8; padding: 6px 10px; border-radius: 6px; border: 1px solid #f0f0f0; }
     .checkbox-inline { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: #3a3a3c; white-space: nowrap; }
     .combo-divider { background: #e5e5ea; padding: 8px; border-radius: 8px; margin-top: 8px; text-align: center; }
     .checkbox-group { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
@@ -69,10 +72,12 @@
         <input type="text" id="modelo" required>
         
         <label>Main</label>
-        <div class="input-row">
-          <input type="text" id="main">
+        <input type="text" id="main">
+        <div class="sub-options">
           <label class="checkbox-inline"><input type="checkbox" id="mainOk"> OK</label>
           <label class="checkbox-inline"><input type="checkbox" id="mainNoRef"> Sin ref.</label>
+          <label class="checkbox-inline"><input type="checkbox" id="mainWallapop"> Wallapop</label>
+          <label class="checkbox-inline"><input type="checkbox" id="mainDisponible" checked> Disponible</label>
         </div>
 
         <div class="combo-divider">
@@ -82,24 +87,30 @@
         </div>
 
         <label>Fuente</label>
-        <div class="input-row">
-          <input type="text" id="fuente">
+        <input type="text" id="fuente">
+        <div class="sub-options">
           <label class="checkbox-inline"><input type="checkbox" id="fuenteOk"> OK</label>
           <label class="checkbox-inline"><input type="checkbox" id="fuenteNoRef"> Sin ref.</label>
+          <label class="checkbox-inline"><input type="checkbox" id="fuenteWallapop"> Wallapop</label>
+          <label class="checkbox-inline"><input type="checkbox" id="fuenteDisponible" checked> Disponible</label>
         </div>
 
         <label>T-Con</label>
-        <div class="input-row">
-          <input type="text" id="tcon">
+        <input type="text" id="tcon">
+        <div class="sub-options">
           <label class="checkbox-inline"><input type="checkbox" id="tconOk"> OK</label>
           <label class="checkbox-inline"><input type="checkbox" id="tconNoRef"> Sin ref.</label>
+          <label class="checkbox-inline"><input type="checkbox" id="tconWallapop"> Wallapop</label>
+          <label class="checkbox-inline"><input type="checkbox" id="tconDisponible" checked> Disponible</label>
         </div>
 
         <label>Tiras LED</label>
-        <div class="input-row">
-          <input type="text" id="tirasLed">
+        <input type="text" id="tirasLed">
+        <div class="sub-options">
           <label class="checkbox-inline"><input type="checkbox" id="tirasLedOk"> OK</label>
           <label class="checkbox-inline"><input type="checkbox" id="tirasLedNoRef"> Sin ref.</label>
+          <label class="checkbox-inline"><input type="checkbox" id="tirasLedWallapop"> Wallapop</label>
+          <label class="checkbox-inline"><input type="checkbox" id="tirasLedDisponible" checked> Disponible</label>
         </div>
 
         <label>Panel</label>
@@ -252,12 +263,14 @@
 
     // --- INTERFAZ DE USUARIO ---
 
-    function formatField(label, val, ok, noRef) {
+    function formatField(label, val, ok, noRef, wallapop, disponible) {
       if (!val && !noRef) return '';
       let text = val ? val : 'Disponible';
       let badges = '';
       if (ok) badges += '<span class="badge-ok">✓ Funcional</span>';
       if (noRef) badges += '<span class="badge-noref">(Sin ref.)</span>';
+      if (wallapop) badges += '<span class="badge-wallapop">Wallapop</span>';
+      if (disponible === false) badges += '<span class="badge-no-disp">(No disp.)</span>';
       return `<div class="field"><b>${label}:</b> ${text} ${badges}</div>`;
     }
 
@@ -277,10 +290,10 @@
           card.className = "card";
           card.innerHTML = `
             <h3>${tv.marca} - ${tv.modelo} ${tv.esPanelCompatible ? '✅' : ''} ${tv.esCombo ? '<span class="badge-combo">COMBO</span>' : ''}</h3>
-            ${formatField('Main', tv.main, tv.mainOk, tv.mainNoRef)}
-            ${formatField('Fuente', tv.fuente, tv.fuenteOk, tv.fuenteNoRef)}
-            ${formatField('T-Con', tv.tcon, tv.tconOk, tv.tconNoRef)}
-            ${formatField('Tiras LED', tv.tirasLed, tv.tirasLedOk, tv.tirasLedNoRef)}
+            ${formatField('Main', tv.main, tv.mainOk, tv.mainNoRef, tv.mainWallapop, tv.mainDisponible)}
+            ${formatField('Fuente', tv.fuente, tv.fuenteOk, tv.fuenteNoRef, tv.fuenteWallapop, tv.fuenteDisponible)}
+            ${formatField('T-Con', tv.tcon, tv.tconOk, tv.tconNoRef, tv.tconWallapop, tv.tconDisponible)}
+            ${formatField('Tiras LED', tv.tirasLed, tv.tirasLedOk, tv.tirasLedNoRef, tv.tirasLedWallapop, tv.tirasLedDisponible)}
             ${formatField('Panel', tv.panel, false, tv.panelNoRef)}
             ${formatField('Flex Main/T-Con', tv.flexMainTcon, false, tv.flexMainTconNoRef)}
             ${formatField('Flex Main/Panel', tv.flexMainPanel, false, tv.flexMainPanelNoRef)}
@@ -302,6 +315,13 @@
     function openModal() {
       document.getElementById("tv-form").reset();
       document.getElementById("tv-id").value = "";
+      
+      // Disponibles por defecto marcados al crear
+      document.getElementById("mainDisponible").checked = true;
+      document.getElementById("fuenteDisponible").checked = true;
+      document.getElementById("tconDisponible").checked = true;
+      document.getElementById("tirasLedDisponible").checked = true;
+
       document.getElementById("modal-title").innerText = "Nuevo Despiece";
       document.getElementById("modal").style.display = "block";
     }
@@ -318,20 +338,28 @@
       document.getElementById("main").value = tv.main || "";
       document.getElementById("mainOk").checked = tv.mainOk || false;
       document.getElementById("mainNoRef").checked = tv.mainNoRef || false;
+      document.getElementById("mainWallapop").checked = tv.mainWallapop || false;
+      document.getElementById("mainDisponible").checked = tv.mainDisponible !== undefined ? tv.mainDisponible : true;
 
       document.getElementById("esCombo").checked = tv.esCombo || false;
 
       document.getElementById("fuente").value = tv.fuente || "";
       document.getElementById("fuenteOk").checked = tv.fuenteOk || false;
       document.getElementById("fuenteNoRef").checked = tv.fuenteNoRef || false;
+      document.getElementById("fuenteWallapop").checked = tv.fuenteWallapop || false;
+      document.getElementById("fuenteDisponible").checked = tv.fuenteDisponible !== undefined ? tv.fuenteDisponible : true;
 
       document.getElementById("tcon").value = tv.tcon || "";
       document.getElementById("tconOk").checked = tv.tconOk || false;
       document.getElementById("tconNoRef").checked = tv.tconNoRef || false;
+      document.getElementById("tconWallapop").checked = tv.tconWallapop || false;
+      document.getElementById("tconDisponible").checked = tv.tconDisponible !== undefined ? tv.tconDisponible : true;
 
       document.getElementById("tirasLed").value = tv.tirasLed || "";
       document.getElementById("tirasLedOk").checked = tv.tirasLedOk || false;
       document.getElementById("tirasLedNoRef").checked = tv.tirasLedNoRef || false;
+      document.getElementById("tirasLedWallapop").checked = tv.tirasLedWallapop || false;
+      document.getElementById("tirasLedDisponible").checked = tv.tirasLedDisponible !== undefined ? tv.tirasLedDisponible : true;
 
       document.getElementById("panel").value = tv.panel || "";
       document.getElementById("panelNoRef").checked = tv.panelNoRef || false;
@@ -371,20 +399,28 @@
         main: document.getElementById("main").value,
         mainOk: document.getElementById("mainOk").checked,
         mainNoRef: document.getElementById("mainNoRef").checked,
+        mainWallapop: document.getElementById("mainWallapop").checked,
+        mainDisponible: document.getElementById("mainDisponible").checked,
 
         esCombo: document.getElementById("esCombo").checked,
 
         fuente: document.getElementById("fuente").value,
         fuenteOk: document.getElementById("fuenteOk").checked,
         fuenteNoRef: document.getElementById("fuenteNoRef").checked,
+        fuenteWallapop: document.getElementById("fuenteWallapop").checked,
+        fuenteDisponible: document.getElementById("fuenteDisponible").checked,
 
         tcon: document.getElementById("tcon").value,
         tconOk: document.getElementById("tconOk").checked,
         tconNoRef: document.getElementById("tconNoRef").checked,
+        tconWallapop: document.getElementById("tconWallapop").checked,
+        tconDisponible: document.getElementById("tconDisponible").checked,
 
         tirasLed: document.getElementById("tirasLed").value,
         tirasLedOk: document.getElementById("tirasLedOk").checked,
         tirasLedNoRef: document.getElementById("tirasLedNoRef").checked,
+        tirasLedWallapop: document.getElementById("tirasLedWallapop").checked,
+        tirasLedDisponible: document.getElementById("tirasLedDisponible").checked,
 
         panel: document.getElementById("panel").value,
         panelNoRef: document.getElementById("panelNoRef").checked,
@@ -420,4 +456,5 @@
   </script>
 </body>
 </html>
+
 
