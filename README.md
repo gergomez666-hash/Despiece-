@@ -1,5 +1,5 @@
 # GDGG
-GDGG>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -25,14 +25,17 @@ GDGG>
     .card { background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .card h3 { margin: 0 0 6px 0; font-size: 18px; display: flex; justify-content: space-between; }
     .field { font-size: 14px; margin: 4px 0; color: #3a3a3c; }
-    .badge-ok { color: var(--success); font-weight: bold; margin-left: 6px; }
+    .badge-ok { color: var(--success); font-weight: bold; margin-left: 4px; }
+    .badge-combo { background: #ff9500; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 6px; }
+    .badge-noref { color: #8e8e93; font-style: italic; font-size: 12px; margin-left: 4px; }
     .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); padding: 20px; overflow-y: auto; z-index: 1000; }
     .modal-content { background: white; border-radius: 14px; padding: 20px; max-width: 500px; margin: 20px auto; }
     label { display: block; font-size: 13px; font-weight: 600; margin-top: 10px; color: #6c6c70; }
     input[type="text"], textarea { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; font-size: 15px; }
-    .input-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-    .input-row input[type="text"] { flex: 1; margin-top: 0; }
-    .checkbox-inline { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #3a3a3c; white-space: nowrap; }
+    .input-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+    .input-row input[type="text"] { flex: 1; min-width: 120px; margin-top: 0; }
+    .checkbox-inline { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: #3a3a3c; white-space: nowrap; }
+    .combo-divider { background: #e5e5ea; padding: 8px; border-radius: 8px; margin-top: 8px; text-align: center; }
     .checkbox-group { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
     .actions { display: flex; gap: 10px; margin-top: 16px; }
   </style>
@@ -69,43 +72,77 @@ GDGG>
         <div class="input-row">
           <input type="text" id="main">
           <label class="checkbox-inline"><input type="checkbox" id="mainOk"> OK</label>
+          <label class="checkbox-inline"><input type="checkbox" id="mainNoRef"> Sin ref.</label>
+        </div>
+
+        <div class="combo-divider">
+          <label class="checkbox-inline" style="justify-content: center; font-size: 13px; color: #ff9500;">
+            <input type="checkbox" id="esCombo"> 🔗 Main + Fuente en Combo
+          </label>
         </div>
 
         <label>Fuente</label>
         <div class="input-row">
           <input type="text" id="fuente">
           <label class="checkbox-inline"><input type="checkbox" id="fuenteOk"> OK</label>
+          <label class="checkbox-inline"><input type="checkbox" id="fuenteNoRef"> Sin ref.</label>
         </div>
 
         <label>T-Con</label>
         <div class="input-row">
           <input type="text" id="tcon">
           <label class="checkbox-inline"><input type="checkbox" id="tconOk"> OK</label>
+          <label class="checkbox-inline"><input type="checkbox" id="tconNoRef"> Sin ref.</label>
         </div>
 
         <label>Tiras LED</label>
         <div class="input-row">
           <input type="text" id="tirasLed">
           <label class="checkbox-inline"><input type="checkbox" id="tirasLedOk"> OK</label>
+          <label class="checkbox-inline"><input type="checkbox" id="tirasLedNoRef"> Sin ref.</label>
         </div>
 
         <label>Panel</label>
-        <input type="text" id="panel">
+        <div class="input-row">
+          <input type="text" id="panel">
+          <label class="checkbox-inline"><input type="checkbox" id="panelNoRef"> Sin ref.</label>
+        </div>
 
         <label>Flex Main / T-Con</label>
-        <input type="text" id="flexMainTcon">
+        <div class="input-row">
+          <input type="text" id="flexMainTcon">
+          <label class="checkbox-inline"><input type="checkbox" id="flexMainTconNoRef"> Sin ref.</label>
+        </div>
 
         <label>Flex Main / Panel</label>
-        <input type="text" id="flexMainPanel">
+        <div class="input-row">
+          <input type="text" id="flexMainPanel">
+          <label class="checkbox-inline"><input type="checkbox" id="flexMainPanelNoRef"> Sin ref.</label>
+        </div>
 
         <label>Wi-Fi</label>
-        <input type="text" id="wifi">
+        <div class="input-row">
+          <input type="text" id="wifi">
+          <label class="checkbox-inline"><input type="checkbox" id="wifiNoRef"> Sin ref.</label>
+        </div>
 
         <label>RF</label>
-        <input type="text" id="rf">
+        <div class="input-row">
+          <input type="text" id="rf">
+          <label class="checkbox-inline"><input type="checkbox" id="rfNoRef"> Sin ref.</label>
+        </div>
+
+        <label>Botonera</label>
+        <div class="input-row">
+          <input type="text" id="botonera">
+          <label class="checkbox-inline"><input type="checkbox" id="botoneraNoRef"> Sin ref.</label>
+        </div>
 
         <label>Otros</label>
-        <textarea id="otros" rows="2"></textarea>
+        <div class="input-row">
+          <textarea id="otros" rows="2"></textarea>
+          <label class="checkbox-inline"><input type="checkbox" id="otrosNoRef"> Sin ref.</label>
+        </div>
         
         <div class="checkbox-group">
           <input type="checkbox" id="esPanelCompatible">
@@ -215,6 +252,15 @@ GDGG>
 
     // --- INTERFAZ DE USUARIO ---
 
+    function formatField(label, val, ok, noRef) {
+      if (!val && !noRef) return '';
+      let text = val ? val : 'Disponible';
+      let badges = '';
+      if (ok) badges += '<span class="badge-ok">✓ Funcional</span>';
+      if (noRef) badges += '<span class="badge-noref">(Sin ref.)</span>';
+      return `<div class="field"><b>${label}:</b> ${text} ${badges}</div>`;
+    }
+
     function renderTVs() {
       const query = document.getElementById("search").value.toLowerCase();
       getTVs((tvs) => {
@@ -222,7 +268,7 @@ GDGG>
         list.innerHTML = "";
         
         const filtered = tvs.filter(tv => 
-          (tv.marca + " " + tv.modelo + " " + (tv.main||"") + " " + (tv.fuente||"") + " " + (tv.panel||"") + " " + (tv.modelosCompatibles || ""))
+          (tv.marca + " " + tv.modelo + " " + (tv.main||"") + " " + (tv.fuente||"") + " " + (tv.panel||"") + " " + (tv.botonera||"") + " " + (tv.modelosCompatibles || ""))
           .toLowerCase().includes(query)
         );
 
@@ -230,12 +276,18 @@ GDGG>
           const card = document.createElement("div");
           card.className = "card";
           card.innerHTML = `
-            <h3>${tv.marca} - ${tv.modelo} ${tv.esPanelCompatible ? '✅' : ''}</h3>
-            ${tv.main ? `<div class="field"><b>Main:</b> ${tv.main} ${tv.mainOk ? '<span class="badge-ok">✓ Funcional</span>' : ''}</div>` : ''}
-            ${tv.fuente ? `<div class="field"><b>Fuente:</b> ${tv.fuente} ${tv.fuenteOk ? '<span class="badge-ok">✓ Funcional</span>' : ''}</div>` : ''}
-            ${tv.tcon ? `<div class="field"><b>T-Con:</b> ${tv.tcon} ${tv.tconOk ? '<span class="badge-ok">✓ Funcional</span>' : ''}</div>` : ''}
-            ${tv.tirasLed ? `<div class="field"><b>Tiras LED:</b> ${tv.tirasLed} ${tv.tirasLedOk ? '<span class="badge-ok">✓ Funcional</span>' : ''}</div>` : ''}
-            ${tv.panel ? `<div class="field"><b>Panel:</b> ${tv.panel}</div>` : ''}
+            <h3>${tv.marca} - ${tv.modelo} ${tv.esPanelCompatible ? '✅' : ''} ${tv.esCombo ? '<span class="badge-combo">COMBO</span>' : ''}</h3>
+            ${formatField('Main', tv.main, tv.mainOk, tv.mainNoRef)}
+            ${formatField('Fuente', tv.fuente, tv.fuenteOk, tv.fuenteNoRef)}
+            ${formatField('T-Con', tv.tcon, tv.tconOk, tv.tconNoRef)}
+            ${formatField('Tiras LED', tv.tirasLed, tv.tirasLedOk, tv.tirasLedNoRef)}
+            ${formatField('Panel', tv.panel, false, tv.panelNoRef)}
+            ${formatField('Flex Main/T-Con', tv.flexMainTcon, false, tv.flexMainTconNoRef)}
+            ${formatField('Flex Main/Panel', tv.flexMainPanel, false, tv.flexMainPanelNoRef)}
+            ${formatField('Wi-Fi', tv.wifi, false, tv.wifiNoRef)}
+            ${formatField('RF', tv.rf, false, tv.rfNoRef)}
+            ${formatField('Botonera', tv.botonera, false, tv.botoneraNoRef)}
+            ${formatField('Otros', tv.otros, false, tv.otrosNoRef)}
             ${tv.modelosCompatibles ? `<div class="field"><b>Compatibles:</b> ${tv.modelosCompatibles}</div>` : ''}
             <div class="actions" style="margin-top: 10px;">
               <button class="btn btn-secondary" onclick='editTV(${JSON.stringify(tv)})'>Editar</button>
@@ -265,22 +317,43 @@ GDGG>
       
       document.getElementById("main").value = tv.main || "";
       document.getElementById("mainOk").checked = tv.mainOk || false;
+      document.getElementById("mainNoRef").checked = tv.mainNoRef || false;
+
+      document.getElementById("esCombo").checked = tv.esCombo || false;
 
       document.getElementById("fuente").value = tv.fuente || "";
       document.getElementById("fuenteOk").checked = tv.fuenteOk || false;
+      document.getElementById("fuenteNoRef").checked = tv.fuenteNoRef || false;
 
       document.getElementById("tcon").value = tv.tcon || "";
       document.getElementById("tconOk").checked = tv.tconOk || false;
+      document.getElementById("tconNoRef").checked = tv.tconNoRef || false;
 
       document.getElementById("tirasLed").value = tv.tirasLed || "";
       document.getElementById("tirasLedOk").checked = tv.tirasLedOk || false;
+      document.getElementById("tirasLedNoRef").checked = tv.tirasLedNoRef || false;
 
       document.getElementById("panel").value = tv.panel || "";
+      document.getElementById("panelNoRef").checked = tv.panelNoRef || false;
+
       document.getElementById("flexMainTcon").value = tv.flexMainTcon || "";
+      document.getElementById("flexMainTconNoRef").checked = tv.flexMainTconNoRef || false;
+
       document.getElementById("flexMainPanel").value = tv.flexMainPanel || "";
+      document.getElementById("flexMainPanelNoRef").checked = tv.flexMainPanelNoRef || false;
+
       document.getElementById("wifi").value = tv.wifi || "";
+      document.getElementById("wifiNoRef").checked = tv.wifiNoRef || false;
+
       document.getElementById("rf").value = tv.rf || "";
+      document.getElementById("rfNoRef").checked = tv.rfNoRef || false;
+
+      document.getElementById("botonera").value = tv.botonera || "";
+      document.getElementById("botoneraNoRef").checked = tv.botoneraNoRef || false;
+
       document.getElementById("otros").value = tv.otros || "";
+      document.getElementById("otrosNoRef").checked = tv.otrosNoRef || false;
+
       document.getElementById("esPanelCompatible").checked = tv.esPanelCompatible || false;
       document.getElementById("modelosCompatibles").value = tv.modelosCompatibles || "";
       
@@ -297,22 +370,43 @@ GDGG>
         
         main: document.getElementById("main").value,
         mainOk: document.getElementById("mainOk").checked,
+        mainNoRef: document.getElementById("mainNoRef").checked,
+
+        esCombo: document.getElementById("esCombo").checked,
 
         fuente: document.getElementById("fuente").value,
         fuenteOk: document.getElementById("fuenteOk").checked,
+        fuenteNoRef: document.getElementById("fuenteNoRef").checked,
 
         tcon: document.getElementById("tcon").value,
         tconOk: document.getElementById("tconOk").checked,
+        tconNoRef: document.getElementById("tconNoRef").checked,
 
         tirasLed: document.getElementById("tirasLed").value,
         tirasLedOk: document.getElementById("tirasLedOk").checked,
+        tirasLedNoRef: document.getElementById("tirasLedNoRef").checked,
 
         panel: document.getElementById("panel").value,
+        panelNoRef: document.getElementById("panelNoRef").checked,
+
         flexMainTcon: document.getElementById("flexMainTcon").value,
+        flexMainTconNoRef: document.getElementById("flexMainTconNoRef").checked,
+
         flexMainPanel: document.getElementById("flexMainPanel").value,
+        flexMainPanelNoRef: document.getElementById("flexMainPanelNoRef").checked,
+
         wifi: document.getElementById("wifi").value,
+        wifiNoRef: document.getElementById("wifiNoRef").checked,
+
         rf: document.getElementById("rf").value,
+        rfNoRef: document.getElementById("rfNoRef").checked,
+
+        botonera: document.getElementById("botonera").value,
+        botoneraNoRef: document.getElementById("botoneraNoRef").checked,
+
         otros: document.getElementById("otros").value,
+        otrosNoRef: document.getElementById("otrosNoRef").checked,
+
         esPanelCompatible: document.getElementById("esPanelCompatible").checked,
         modelosCompatibles: document.getElementById("modelosCompatibles").value
       };
@@ -326,3 +420,4 @@ GDGG>
   </script>
 </body>
 </html>
+
