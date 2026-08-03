@@ -149,6 +149,12 @@
           <label class="checkbox-inline"><input type="checkbox" id="botoneraNoRef"> Sin ref.</label>
         </div>
 
+        <label>Peana / Patas</label>
+        <div class="input-row">
+          <input type="text" id="peana">
+          <label class="checkbox-inline"><input type="checkbox" id="peanaNoRef"> Sin ref.</label>
+        </div>
+
         <label>Otros</label>
         <div class="input-row">
           <textarea id="otros" rows="2"></textarea>
@@ -281,7 +287,7 @@
         list.innerHTML = "";
         
         const filtered = tvs.filter(tv => 
-          (tv.marca + " " + tv.modelo + " " + (tv.main||"") + " " + (tv.fuente||"") + " " + (tv.panel||"") + " " + (tv.botonera||"") + " " + (tv.modelosCompatibles || ""))
+          (tv.marca + " " + tv.modelo + " " + (tv.main||"") + " " + (tv.fuente||"") + " " + (tv.panel||"") + " " + (tv.botonera||"") + " " + (tv.peana||"") + " " + (tv.modelosCompatibles || ""))
           .toLowerCase().includes(query)
         );
 
@@ -300,6 +306,7 @@
             ${formatField('Wi-Fi', tv.wifi, false, tv.wifiNoRef)}
             ${formatField('RF', tv.rf, false, tv.rfNoRef)}
             ${formatField('Botonera', tv.botonera, false, tv.botoneraNoRef)}
+            ${formatField('Peana / Patas', tv.peana, false, tv.peanaNoRef)}
             ${formatField('Otros', tv.otros, false, tv.otrosNoRef)}
             ${tv.modelosCompatibles ? `<div class="field"><b>Compatibles:</b> ${tv.modelosCompatibles}</div>` : ''}
             <div class="actions" style="margin-top: 10px;">
@@ -379,6 +386,9 @@
       document.getElementById("botonera").value = tv.botonera || "";
       document.getElementById("botoneraNoRef").checked = tv.botoneraNoRef || false;
 
+      document.getElementById("peana").value = tv.peana || "";
+      document.getElementById("peanaNoRef").checked = tv.peanaNoRef || false;
+
       document.getElementById("otros").value = tv.otros || "";
       document.getElementById("otrosNoRef").checked = tv.otrosNoRef || false;
 
@@ -440,6 +450,9 @@
         botonera: document.getElementById("botonera").value,
         botoneraNoRef: document.getElementById("botoneraNoRef").checked,
 
+        peana: document.getElementById("peana").value,
+        peanaNoRef: document.getElementById("peanaNoRef").checked,
+
         otros: document.getElementById("otros").value,
         otrosNoRef: document.getElementById("otrosNoRef").checked,
 
@@ -456,5 +469,3 @@
   </script>
 </body>
 </html>
-
-
