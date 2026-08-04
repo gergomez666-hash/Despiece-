@@ -1,4 +1,3 @@
-# GDGG
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -176,6 +175,19 @@
     </div>
   </div>
 
+  <!-- Modal Backup para iOS -->
+  <div id="backup-modal" class="modal">
+    <div class="modal-content">
+      <h2>Backup de tu Base de Datos</h2>
+      <p style="font-size: 13px; color: #6c6c70;">Copia el siguiente texto o guárdalo como archivo en tu dispositivo para transferirlo al PC:</p>
+      <textarea id="backup-text" rows="8" readonly onclick="this.select()"></textarea>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="document.getElementById('backup-modal').style.display='none'">Cerrar</button>
+        <button class="btn" onclick="copyBackupText()">📋 Copiar Texto</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let db;
     const request = indexedDB.open("TVDatabase", 1);
@@ -215,7 +227,7 @@
       }
     }
 
-    // --- COPIAS DE SEGURIDAD ---
+    // --- COPIAS DE SEGURIDAD MEJORADAS ---
 
     function exportBackup() {
       getTVs((tvs) => {
@@ -223,14 +235,45 @@
           alert("No hay registros para exportar.");
           return;
         }
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tvs, null, 2));
-        const downloadAnchor = document.createElement('a');
-        const fecha = new Date().toISOString().slice(0, 10);
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", `backup_despiece_tv_${fecha}.json`);
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
+        
+        const jsonStr = JSON.stringify(tvs, null, 2);
+        
+        // Intento de descarga automática (funciona bien en PC / Navegador normal)
+        try {
+          const blob = new Blob([jsonStr], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const fecha = new Date().toISOString().slice(0, 10);
+          const downloadAnchor = document.createElement('a');
+          downloadAnchor.href = url;
+          downloadAnchor.download = `backup_despiece_tv_${fecha}.json`;
+          document.body.appendChild(downloadAnchor);
+          downloadAnchor.click();
+          downloadAnchor.remove();
+          
+          // Si es un entorno standalone de iOS (pantalla de inicio), mostramos el plan B
+          if (window.navigator.standalone) {
+            showBackupModal(jsonStr);
+          }
+        } catch (e) {
+          showBackupModal(jsonStr);
+        }
+      });
+    }
+
+    function showBackupModal(jsonStr) {
+      document.getElementById("backup-text").value = jsonStr;
+      document.getElementById("backup-modal").style.display = "block";
+    }
+
+    function copyBackupText() {
+      const textarea = document.getElementById("backup-text");
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        alert("¡Texto copiado al portapapeles!");
+      }).catch(() => {
+        document.execCommand("copy");
+        alert("¡Texto copiado al portapapeles!");
       });
     }
 
@@ -466,3 +509,4 @@
   </script>
 </body>
 </html>
+
