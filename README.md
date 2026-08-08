@@ -179,7 +179,7 @@
   <div id="backup-modal" class="modal">
     <div class="modal-content">
       <h2>Backup de tu Base de Datos</h2>
-      <p style="font-size: 13px; color: #6c6c70;">Copia el siguiente texto o guárdalo como archivo en tu dispositivo para transferirlo al PC:</p>
+      <p style="font-size: 13px; color: #6c6c70;">Copia el siguiente texto o guárdalo como archivo para transferirlo:</p>
       <textarea id="backup-text" rows="8" readonly onclick="this.select()"></textarea>
       <div class="actions">
         <button class="btn btn-secondary" onclick="document.getElementById('backup-modal').style.display='none'">Cerrar</button>
@@ -227,7 +227,7 @@
       }
     }
 
-    // --- COPIAS DE SEGURIDAD MEJORADAS ---
+    // --- COPIAS DE SEGURIDAD Y FUSIÓN SIN DUPLICADOS ---
 
     function exportBackup() {
       getTVs((tvs) => {
@@ -238,7 +238,6 @@
         
         const jsonStr = JSON.stringify(tvs, null, 2);
         
-        // Intento de descarga automática (funciona bien en PC / Navegador normal)
         try {
           const blob = new Blob([jsonStr], { type: "application/json" });
           const url = URL.createObjectURL(blob);
@@ -250,7 +249,6 @@
           downloadAnchor.click();
           downloadAnchor.remove();
           
-          // Si es un entorno standalone de iOS (pantalla de inicio), mostramos el plan B
           if (window.navigator.standalone) {
             showBackupModal(jsonStr);
           }
@@ -287,21 +285,36 @@
           const importedTVs = JSON.parse(e.target.result);
           if (!Array.isArray(importedTVs)) throw new Error("Formato inválido");
 
-          if (confirm(`Se van a importar ${importedTVs.length} registros. ¿Deseas continuar?`)) {
-            const tx = db.transaction("tvs", "readwrite");
-            const store = tx.objectStore("tvs");
-            
-            importedTVs.forEach(tv => {
-              delete tv.id;
-              store.add(tv);
-            });
+          getTVs((existingTVs) => {
+            if (confirm(`Se han encontrado ${importedTVs.length} registros en el archivo. ¿Deseas unificarlos sin duplicar coincidencia de Marca y Modelo?`)) {
+              const tx = db.transaction("tvs", "readwrite");
+              const store = tx.objectStore("tvs");
 
-            tx.oncomplete = () => {
-              alert("¡Copia de seguridad importada con éxito!");
-              renderTVs();
-              document.getElementById('importFile').value = '';
-            };
-          }
+              importedTVs.forEach(importedItem => {
+                // Buscar si la TV ya existe por Marca + Modelo (ignorando mayúsculas/minúsculas)
+                const existing = existingTVs.find(curr => 
+                  curr.marca.trim().toLowerCase() === importedItem.marca.trim().toLowerCase() && 
+                  curr.modelo.trim().toLowerCase() === importedItem.modelo.trim().toLowerCase()
+                );
+
+                if (existing) {
+                  // Si existe, actualiza sus datos conservando la ID original
+                  importedItem.id = existing.id;
+                  store.put(importedItem);
+                } else {
+                  // Si es nueva, la añade eliminando cualquier ID previa para autoincrementar
+                  delete importedItem.id;
+                  store.add(importedItem);
+                }
+              });
+
+              tx.oncomplete = () => {
+                alert("¡Base de datos importada e unificada correctamente!");
+                renderTVs();
+                document.getElementById('importFile').value = '';
+              };
+            }
+          });
         } catch (err) {
           alert("Error al leer el archivo. Asegúrate de que es un backup válido (.json).");
         }
@@ -365,7 +378,6 @@
       document.getElementById("tv-form").reset();
       document.getElementById("tv-id").value = "";
       
-      // Disponibles por defecto marcados al crear
       document.getElementById("mainDisponible").checked = true;
       document.getElementById("fuenteDisponible").checked = true;
       document.getElementById("tconDisponible").checked = true;
