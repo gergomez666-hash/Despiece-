@@ -227,7 +227,7 @@
       }
     }
 
-    // --- COPIAS DE SEGURIDAD Y FUSIÓN SIN DUPLICADOS ---
+    // --- COPIAS DE SEGURIDAD Y PREVENCIÓN DE DUPLICADOS EXACTOS ---
 
     function exportBackup() {
       getTVs((tvs) => {
@@ -275,6 +275,25 @@
       });
     }
 
+    // Función auxiliar para comparar si dos objetos TV son exactamente iguales en todos los campos
+    function areTVsIdentical(tv1, tv2) {
+      const keys = [
+        'marca', 'modelo', 'main', 'mainOk', 'mainNoRef', 'mainWallapop', 'mainDisponible',
+        'esCombo', 'fuente', 'fuenteOk', 'fuenteNoRef', 'fuenteWallapop', 'fuenteDisponible',
+        'tcon', 'tconOk', 'tconNoRef', 'tconWallapop', 'tconDisponible',
+        'tirasLed', 'tirasLedOk', 'tirasLedNoRef', 'tirasLedWallapop', 'tirasLedDisponible',
+        'panel', 'panelNoRef', 'flexMainTcon', 'flexMainTconNoRef', 'flexMainPanel',
+        'flexMainPanelNoRef', 'wifi', 'wifiNoRef', 'rf', 'rfNoRef', 'botonera',
+        'botoneraNoRef', 'tienePeana', 'otros', 'otrosNoRef', 'esPanelCompatible', 'modelosCompatibles'
+      ];
+
+      return keys.every(key => {
+        const val1 = (tv1[key] ?? "").toString().trim().toLowerCase();
+        const val2 = (tv2[key] ?? "").toString().trim().toLowerCase();
+        return val1 === val2;
+      });
+    }
+
     function importBackup(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -286,30 +305,27 @@
           if (!Array.isArray(importedTVs)) throw new Error("Formato inválido");
 
           getTVs((existingTVs) => {
-            if (confirm(`Se han encontrado ${importedTVs.length} registros en el archivo. ¿Deseas unificarlos sin duplicar coincidencia de Marca y Modelo?`)) {
+            if (confirm(`Se han procesado ${importedTVs.length} registros. Se ignorarán los que coincidan exactamente en todos los campos con los existentes. ¿Continuar?`)) {
               const tx = db.transaction("tvs", "readwrite");
               const store = tx.objectStore("tvs");
+              let añadidos = 0;
+              let ignorados = 0;
 
               importedTVs.forEach(importedItem => {
-                // Buscar si la TV ya existe por Marca + Modelo (ignorando mayúsculas/minúsculas)
-                const existing = existingTVs.find(curr => 
-                  curr.marca.trim().toLowerCase() === importedItem.marca.trim().toLowerCase() && 
-                  curr.modelo.trim().toLowerCase() === importedItem.modelo.trim().toLowerCase()
-                );
+                // Comprobar si ya existe una TV idéntica en TODOS los campos
+                const isDuplicate = existingTVs.some(curr => areTVsIdentical(curr, importedItem));
 
-                if (existing) {
-                  // Si existe, actualiza sus datos conservando la ID original
-                  importedItem.id = existing.id;
-                  store.put(importedItem);
-                } else {
-                  // Si es nueva, la añade eliminando cualquier ID previa para autoincrementar
-                  delete importedItem.id;
+                if (!isDuplicate) {
+                  delete importedItem.id; // Quitar ID para autoincrementar
                   store.add(importedItem);
+                  añadidos++;
+                } else {
+                  ignorados++;
                 }
               });
 
               tx.oncomplete = () => {
-                alert("¡Base de datos importada e unificada correctamente!");
+                alert(`¡Importación finalizada!\n\n- Nuevos añadidos: ${añadidos}\n- Duplicados ignorados: ${ignorados}`);
                 renderTVs();
                 document.getElementById('importFile').value = '';
               };
