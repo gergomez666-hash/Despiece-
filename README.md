@@ -275,7 +275,6 @@
       });
     }
 
-    // Función auxiliar para comparar si dos objetos TV son exactamente iguales en todos los campos
     function areTVsIdentical(tv1, tv2) {
       const keys = [
         'marca', 'modelo', 'main', 'mainOk', 'mainNoRef', 'mainWallapop', 'mainDisponible',
@@ -312,11 +311,10 @@
               let ignorados = 0;
 
               importedTVs.forEach(importedItem => {
-                // Comprobar si ya existe una TV idéntica en TODOS los campos
                 const isDuplicate = existingTVs.some(curr => areTVsIdentical(curr, importedItem));
 
                 if (!isDuplicate) {
-                  delete importedItem.id; // Quitar ID para autoincrementar
+                  delete importedItem.id;
                   store.add(importedItem);
                   añadidos++;
                 } else {
@@ -338,7 +336,7 @@
       reader.readAsText(file);
     }
 
-    // --- INTERFAZ DE USUARIO ---
+    // --- INTERFAZ DE USUARIO Y BÚSQUEDA GLOBAL ---
 
     function formatField(label, val, ok, noRef, wallapop, disponible) {
       if (!val && !noRef) return '';
@@ -352,15 +350,23 @@
     }
 
     function renderTVs() {
-      const query = document.getElementById("search").value.toLowerCase();
+      const query = document.getElementById("search").value.toLowerCase().trim();
       getTVs((tvs) => {
         const list = document.getElementById("tv-list");
         list.innerHTML = "";
         
-        const filtered = tvs.filter(tv => 
-          (tv.marca + " " + tv.modelo + " " + (tv.main||"") + " " + (tv.fuente||"") + " " + (tv.panel||"") + " " + (tv.botonera||"") + " " + (tv.modelosCompatibles || ""))
-          .toLowerCase().includes(query)
-        );
+        const filtered = tvs.filter(tv => {
+          if (!query) return true;
+
+          // Unificamos absolutamente todos los valores del objeto TV en una sola cadena para buscar en ella
+          const fullContent = [
+            tv.marca, tv.modelo, tv.main, tv.fuente, tv.tcon, tv.tirasLed, 
+            tv.panel, tv.flexMainTcon, tv.flexMainPanel, tv.wifi, tv.rf, 
+            tv.botonera, tv.otros, tv.modelosCompatibles
+          ].map(val => (val || "").toString()).join(" ").toLowerCase();
+
+          return fullContent.includes(query);
+        });
 
         filtered.reverse().forEach(tv => {
           const card = document.createElement("div");
